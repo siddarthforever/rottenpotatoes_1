@@ -8,10 +8,10 @@ class MoviesController < ApplicationController
 
   def index
     @movies = Movie.all
-
+    @all_ratings = Movie.select(:rating).uniq
        @val = params[:sort]
        if @val == 'title'
-	@movies = Movie.order("title")
+	@movies = Movie.order('title')
        elsif @val == 'release_date'
 	@movies = Movie.order('release_date')
        end
