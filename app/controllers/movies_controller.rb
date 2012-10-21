@@ -8,11 +8,21 @@ class MoviesController < ApplicationController
 
   def index
     @movies = Movie.all
+
+       @val = params[:sort]
+       if @val == 'title'
+	@movies = Movie.order("title")
+       elsif @val == 'release_date'
+	@movies = Movie.order('release_date')
+       end
+    
   end
 
   def new
     # default: render 'new' template
   end
+
+  
 
   def create
     @movie = Movie.create!(params[:movie])
@@ -37,5 +47,7 @@ class MoviesController < ApplicationController
     flash[:notice] = "Movie '#{@movie.title}' deleted."
     redirect_to movies_path
   end
+
+  
 
 end
