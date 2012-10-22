@@ -1,11 +1,11 @@
 -#  This file is app/views/movies/index.html.haml
 %h1 All Movies
-= form_tag movies_path, :method => :get do
+= form_tag movies_path, :id => 'ratings_path', :method => :get do
   Include: 
   - @all_ratings.each do |rating|
     = rating
     = check_box_tag "ratings[#{rating}]", 1, if params[:filter]; params[:filter].include?(rating) elsif params[:ratings]; params[:ratings].include?(rating) else; 1 end 
-  = submit_tag 'Refresh'
+  = submit_tag 'Refresh', :id => 'ratings_submit'
 -# logger.debug "New post 54: #{params[:ratings].inspect}"
 %table#movies
   %thead
