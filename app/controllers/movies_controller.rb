@@ -11,32 +11,23 @@ class MoviesController < ApplicationController
 
   def index
     
-    @all_ratings = Set.new
-   # @movies = Movie.all
-    all_rating = Movie.select(:rating)
-    all_rating.each do |rate|
+       @all_ratings = Set.new
+       all_rating = Movie.select(:rating)
+       all_rating.each do |rate|
          @all_ratings.add(rate.getRating)
-      end
-    	#logger.debug "New post 4: #{params[:ratings].nil?}"
-	#logger.debug "New post 14: #{params[:ratings].inspect}"
-	
-	if(!params[:ratings].nil?)
-	    @chosen_rating = params[:ratings].keys
-            #logger.debug "New post 3: #{@chosen_rating.inspect}"
-	else
-	    @chosen_rating = @all_ratings.to_a
-        end   
+       end
+    	 
         @val = params[:sort]
 	#logger.debug "New post 5: #{@val.inspect}"
          if @val == 'title'
 	   #logger.debug "New post 7: #{@chosen_rating.inspect}"
-	   @movies = Movie.where(:rating => params[:filter].nil? ? @chosen_rating : params[:filter].keys ).order('title')
+	   @movies = Movie.where(:rating => params[:filter].nil? ? @all_ratings.to_a : params[:filter].keys ).order('title')
 	 elsif @val == 'release_date'
 	   #logger.debug "New post 8: #{@chosen_rating.inspect}"
-	   @movies = Movie.where(:rating => params[:filter].nil? ? @chosen_rating : params[:filter].keys ).order('release_date')
+	   @movies = Movie.where(:rating => params[:filter].nil? ? @all_ratings.to_a : params[:filter].keys ).order('release_date')
 	 else
 	   #logger.debug "New post 9: #{@chosen_rating.inspect}"
-	   @movies = Movie.where(:rating => @chosen_rating)
+	   @movies = Movie.where(:rating => params[:ratings].nil? ? @all_ratings.to_a : params[:ratings].keys)
        end
   end
 
