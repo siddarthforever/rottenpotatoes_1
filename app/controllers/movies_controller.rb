@@ -29,6 +29,7 @@ class MoviesController < ApplicationController
 			temp[rtr] = "#{rtr}"
 		   end
                    session[:filter_rating] = temp
+		   redirect_to movies_path(:sort => session[:filter_sort], :filter => session[:filter_rating])
 		end
 	    end	
 	end
