@@ -4,15 +4,15 @@
   Include: 
   - @all_ratings.each do |rating|
     = rating
-    = check_box_tag "ratings[#{rating}]", 1, if params[:filter]; params[:filter].include?(rating) elsif params[:ratings]; params[:ratings].include?(rating) else; 1 end 
+    = check_box_tag "ratings[#{rating}]", rating, if session[:filter_rating]; session[:filter_rating].include?(rating) else; 1 end 
   = submit_tag 'Refresh', :id => 'ratings_submit'
--# logger.debug "New post 54: #{params[:ratings].inspect}"
+
 %table#movies
   %thead
     %tr
-      %th{:class => ('hilite' if @val == 'title')}= link_to 'Movie Title',  movies_path(:sort => 'title', :filter => params[:ratings]), :id => 'title_header'
+      %th{:class => ('hilite' if session[:filter_sort] == 'title')}= link_to 'Movie Title',  movies_path(:sort => 'title', :filter => params[:ratings]), :id => 'title_header'
       %th Rating
-      %th{:class => ('hilite' if @val == 'release_date')}= link_to 'Release Date', movies_path(:sort => 'release_date', :filter => params[:ratings]), :id => 'release_date_header'
+      %th{:class => ('hilite' if session[:filter_sort] == 'release_date')}= link_to 'Release Date', movies_path(:sort => 'release_date', :filter => params[:ratings]), :id => 'release_date_header'
       %th More Info
   %tbody
     - @movies.each do |movie|

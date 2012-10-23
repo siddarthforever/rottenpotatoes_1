@@ -1,34 +1,44 @@
 class MoviesController < ApplicationController
+  
   def show
     id = params[:id] # retrieve movie ID from URI route
     @movie = Movie.find(id) # look up movie by unique ID
     # will render app/views/movies/show.<extension> by default
   end
 
-  def getParams
-    
-  end
-
+  
   def index
-    
+    #session.clear
        @all_ratings = Set.new
        all_rating = Movie.select(:rating)
        all_rating.each do |rate|
          @all_ratings.add(rate.getRating)
        end
     	 
-        @val = params[:sort]
-	#logger.debug "New post 5: #{@val.inspect}"
-         if @val == 'title'
-	   #logger.debug "New post 7: #{@chosen_rating.inspect}"
-	   @movies = Movie.where(:rating => params[:filter].nil? ? @all_ratings.to_a : params[:filter].keys ).order('title')
-	 elsif @val == 'release_date'
-	   #logger.debug "New post 8: #{@chosen_rating.inspect}"
-	   @movies = Movie.where(:rating => params[:filter].nil? ? @all_ratings.to_a : params[:filter].keys ).order('release_date')
-	 else
-	   #logger.debug "New post 9: #{@chosen_rating.inspect}"
-	   @movies = Movie.where(:rating => params[:ratings].nil? ? @all_ratings.to_a : params[:ratings].keys)
-       end
+	if !params[:filter].nil? 
+	    session.delete(:filter_rating)
+            session[:filter_rating] = params[:filter]
+	else
+	    if !params[:ratings].nil?
+		session.delete(:filter_rating)
+		session[:filter_rating] = params[:ratings]
+	    else
+		if session[:filter_rating].nil?
+		   temp = {}
+		   @all_ratings.to_a.each do |rtr|
+			temp[rtr] = "#{rtr}"
+		   end
+                   session[:filter_rating] = temp
+		end
+	    end	
+	end
+	
+	if !params[:sort].nil?
+	   session.delete(:filter_sort)
+	   session[:filter_sort] = params[:sort]
+	end
+	   
+	@movies = Movie.where(:rating => session[:filter_rating].is_a?(Hash) ? session[:filter_rating].keys : session[:filter_rating] ).order(session[:filter_sort])
   end
 
   def new
@@ -38,7 +48,8 @@ class MoviesController < ApplicationController
   def create
     @movie = Movie.create!(params[:movie])
     flash[:notice] = "#{@movie.title} was successfully created."
-    redirect_to movies_path
+    flash.keep
+    redirect_to movies_path(:sort => session[:filter_sort], :filter => session[:filter_rating])
   end
 
   def edit
@@ -56,7 +67,8 @@ class MoviesController < ApplicationController
     @movie = Movie.find(params[:id])
     @movie.destroy
     flash[:notice] = "Movie '#{@movie.title}' deleted."
-    redirect_to movies_path
+    flash.keep
+    redirect_to movies_path(:sort => session[:filter_sort], :filter => session[:filter_rating])
   end
 
 end
