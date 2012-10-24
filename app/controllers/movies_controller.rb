@@ -31,6 +31,8 @@ class MoviesController < ApplicationController
 		   end
                    session[:filter_rating] = temp
 		   redirect_to movies_path(:filter => session[:filter_rating], :sort => session[:filter_sort])	
+		else
+   		   redirect_to movies_path(:filter => session[:filter_rating], :sort => session[:filter_sort])	
 		end
 	    end	
 	end
