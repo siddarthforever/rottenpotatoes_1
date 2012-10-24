@@ -8,20 +8,21 @@ class MoviesController < ApplicationController
 
   
   def index
-    #session.clear
+      #session.clear
        @all_ratings = Set.new
        all_rating = Movie.select(:rating)
        all_rating.each do |rate|
          @all_ratings.add(rate.getRating)
        end
     	 
-	if !params[:filter].nil? 
+        if !params[:filter].nil? 
 	    session.delete(:filter_rating)
             session[:filter_rating] = params[:filter]
 	else
 	    if !params[:ratings].nil?
 		session.delete(:filter_rating)
 		session[:filter_rating] = params[:ratings]
+	        redirect_to movies_path(:filter => session[:filter_rating], :sort => session[:filter_sort])	
 	    else
 		if session[:filter_rating].nil?
 		   temp = {}
@@ -29,7 +30,7 @@ class MoviesController < ApplicationController
 			temp[rtr] = "#{rtr}"
 		   end
                    session[:filter_rating] = temp
-		   redirect_to movies_path(:sort => session[:filter_sort], :filter => session[:filter_rating])
+		   redirect_to movies_path(:filter => session[:filter_rating], :sort => session[:filter_sort])	
 		end
 	    end	
 	end
@@ -38,7 +39,7 @@ class MoviesController < ApplicationController
 	   session.delete(:filter_sort)
 	   session[:filter_sort] = params[:sort]
 	end
-	   
+	
 	@movies = Movie.where(:rating => session[:filter_rating].is_a?(Hash) ? session[:filter_rating].keys : session[:filter_rating] ).order(session[:filter_sort])
   end
 
